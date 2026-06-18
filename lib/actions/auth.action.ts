@@ -133,3 +133,25 @@ export async function isAuthenticated() {
   const user = await getCurrentUser();
   return !!user;
 }
+
+// Update user profile (name, email, profilePhoto)
+export async function updateUserProfile(params: {
+  uid: string;
+  name?: string;
+  email?: string;
+  profilePhoto?: string;
+}) {
+  const db = getAdminDb();
+  try {
+    const updates: Record<string, string> = {};
+    if (params.name) updates.name = params.name;
+    if (params.email) updates.email = params.email;
+    if (params.profilePhoto) updates.profilePhoto = params.profilePhoto;
+
+    await db.collection("users").doc(params.uid).update(updates);
+    return { success: true };
+  } catch (error) {
+    console.error("Error updating profile:", error);
+    return { success: false, message: "Failed to update profile." };
+  }
+}
