@@ -13,6 +13,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  GoogleAuthProvider,
+  GithubAuthProvider,
+  signInWithPopup,
 } from "firebase/auth";
 
 import { Form } from "@/components/ui/form";
@@ -100,6 +103,33 @@ const AuthForm = ({ type }: { type: FormType }) => {
     }
   };
 
+  const handleSocialSignIn = async (provider: "google" | "github") => {
+    setIsLoading(true);
+    try {
+      const authProvider =
+        provider === "google" ? new GoogleAuthProvider() : new GithubAuthProvider();
+      const userCredential = await signInWithPopup(auth, authProvider);
+      const { user } = userCredential;
+      const idToken = await user.getIdToken();
+
+      // Save user to DB if new
+      await signUp({
+        uid: user.uid,
+        name: user.displayName || "User",
+        email: user.email!,
+        password: "",
+      });
+
+      await signIn({ email: user.email!, idToken });
+      toast.success("Signed in successfully.");
+      router.push("/");
+    } catch (error: any) {
+      toast.error(error.message || "Social sign-in failed.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const isSignIn = type === "sign-in";
 
   return (
@@ -154,6 +184,31 @@ const AuthForm = ({ type }: { type: FormType }) => {
             </Button>
           </form>
         </Form>
+
+        <div className="flex items-center gap-3">
+          <div className="flex-1 h-px bg-light-600" />
+          <span className="text-light-400 text-sm">or continue with</span>
+          <div className="flex-1 h-px bg-light-600" />
+        </div>
+
+        <div className="flex gap-3">
+          <button
+            onClick={() => handleSocialSignIn("google")}
+            disabled={isLoading}
+            className="flex flex-1 items-center justify-center gap-2 bg-dark-200 hover:bg-dark-300 border border-light-600/30 rounded-full min-h-12 font-semibold text-sm text-white transition-colors disabled:opacity-60 cursor-pointer"
+          >
+            <Image src="/google.svg" alt="Google" width={20} height={20} />
+            Google
+          </button>
+          <button
+            onClick={() => handleSocialSignIn("github")}
+            disabled={isLoading}
+            className="flex flex-1 items-center justify-center gap-2 bg-dark-200 hover:bg-dark-300 border border-light-600/30 rounded-full min-h-12 font-semibold text-sm text-white transition-colors disabled:opacity-60 cursor-pointer"
+          >
+            <Image src="/github.svg" alt="GitHub" width={20} height={20} />
+            GitHub
+          </button>
+        </div>
 
         <p className="text-center">
           {isSignIn ? "No account yet?" : "Have an account already?"}

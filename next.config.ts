@@ -12,6 +12,7 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  allowedDevOrigins: ['wide-hotels-stare.loca.lt'],
 };
 
 export default nextConfig;
