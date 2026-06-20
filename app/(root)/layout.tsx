@@ -24,7 +24,7 @@ const Layout = async ({ children }: { children: ReactNode }) => {
           <LogoutButton />
           <Link href="/profile" className="relative group">
             <Image
-              src={user?.profilePhoto || "/user-avatar.png"}
+              src={user?.profilePhoto || "/image.png"}
               alt="Profile"
               width={40}
               height={40}

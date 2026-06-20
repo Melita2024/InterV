@@ -193,7 +193,7 @@ const Agent = ({
                 <span className="absolute inline-flex size-full animate-ping rounded-full bg-primary-200 opacity-75" />
               )}
               <Image
-                src={userProfilePhoto || "/user-avatar.png"}
+                src={userProfilePhoto || "/image.png"}
                 alt="profile-image"
                 width={120}
                 height={120}
