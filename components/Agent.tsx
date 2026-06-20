@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 
 import { cn } from "@/lib/utils";
@@ -36,6 +36,8 @@ const Agent = ({
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isUserSpeaking, setIsUserSpeaking] = useState(false);
   const [lastMessage, setLastMessage] = useState<string>("");
+  const [isGeneratingFeedback, setIsGeneratingFeedback] = useState(false);
+  const feedbackGeneratedRef = useRef(false);
 
   useEffect(() => {
     const onCallStart = () => {
@@ -95,7 +97,9 @@ const Agent = ({
     }
 
     const handleGenerateFeedback = async (messages: SavedMessage[]) => {
-      console.log("handleGenerateFeedback");
+      if (feedbackGeneratedRef.current) return;
+      feedbackGeneratedRef.current = true;
+      setIsGeneratingFeedback(true);
 
       const { success, feedbackId: id } = await createFeedback({
         interviewId: interviewId!,
@@ -115,7 +119,7 @@ const Agent = ({
     if (callStatus === CallStatus.FINISHED) {
       if (type === "generate") {
         router.push("/");
-      } else {
+      } else if (messages.length > 0) {
         handleGenerateFeedback(messages);
       }
     }
@@ -218,7 +222,9 @@ const Agent = ({
       )}
 
       <div className="w-full flex justify-center">
-        {callStatus !== "ACTIVE" ? (
+        {isGeneratingFeedback ? (
+          <p className="text-primary-200 animate-pulse">Generating your feedback...</p>
+        ) : callStatus !== "ACTIVE" ? (
           <button className="relative btn-call" onClick={() => handleCall()}>
             <span
               className={cn(
