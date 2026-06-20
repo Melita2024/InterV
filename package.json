@@ -5,6 +5,9 @@
   "engines": {
     "node": ">=22.0.0"
   },
+  "overrides": {
+    "jwks-rsa": "3.2.2"
+  },
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",

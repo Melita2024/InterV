@@ -34,6 +34,7 @@ const Agent = ({
   const [callStatus, setCallStatus] = useState<CallStatus>(CallStatus.INACTIVE);
   const [messages, setMessages] = useState<SavedMessage[]>([]);
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [isUserSpeaking, setIsUserSpeaking] = useState(false);
   const [lastMessage, setLastMessage] = useState<string>("");
 
   useEffect(() => {
@@ -53,13 +54,16 @@ const Agent = ({
     };
 
     const onSpeechStart = () => {
-      console.log("speech start");
       setIsSpeaking(true);
+      setIsUserSpeaking(false);
     };
 
     const onSpeechEnd = () => {
-      console.log("speech end");
       setIsSpeaking(false);
+    };
+
+    const onVolumeLevel = (volume: number) => {
+      setIsUserSpeaking(volume > 0.05);
     };
 
     const onError = (error: Error) => {
@@ -71,6 +75,7 @@ const Agent = ({
     vapi.on("message", onMessage);
     vapi.on("speech-start", onSpeechStart);
     vapi.on("speech-end", onSpeechEnd);
+    vapi.on("volume-level", onVolumeLevel);
     vapi.on("error", onError);
 
     return () => {
@@ -79,6 +84,7 @@ const Agent = ({
       vapi.off("message", onMessage);
       vapi.off("speech-start", onSpeechStart);
       vapi.off("speech-end", onSpeechEnd);
+      vapi.off("volume-level", onVolumeLevel);
       vapi.off("error", onError);
     };
   }, []);
@@ -178,13 +184,18 @@ const Agent = ({
         {/* User Profile Card */}
         <div className="card-border">
           <div className="card-content">
-            <Image
-              src={userProfilePhoto || "/user-avatar.png"}
-              alt="profile-image"
-              width={120}
-              height={120}
-              className="rounded-full object-cover size-[120px]"
-            />
+            <div className="relative flex items-center justify-center">
+              {isUserSpeaking && (
+                <span className="absolute inline-flex size-full animate-ping rounded-full bg-primary-200 opacity-75" />
+              )}
+              <Image
+                src={userProfilePhoto || "/user-avatar.png"}
+                alt="profile-image"
+                width={120}
+                height={120}
+                className="rounded-full object-cover size-[120px] relative z-10"
+              />
+            </div>
             <h3>{userName}</h3>
           </div>
         </div>
