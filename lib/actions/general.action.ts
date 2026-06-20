@@ -4,7 +4,7 @@ import { generateObject } from "ai";
 import { google } from "@ai-sdk/google";
 
 // 👇 FIX: Import the runtime getter instead of static db
-import { getAdminDb } from "@/firebase/admin"; 
+import { getAdminDb } from "@/firebase/admin";
 import { feedbackSchema } from "@/constants";
 
 export async function createFeedback(params: CreateFeedbackParams) {
@@ -23,19 +23,22 @@ export async function createFeedback(params: CreateFeedbackParams) {
       model: google("gemini-2.5-flash"),
       schema: feedbackSchema,
       prompt: `
-        You are an AI interviewer analyzing a mock interview. Your task is to evaluate the candidate based on structured categories. Be thorough and detailed in your analysis. Don't be lenient with the candidate. If there are mistakes or areas for improvement, point them out.
-        Transcript:
-        ${formattedTranscript}
+    You are an AI interviewer analyzing a mock interview. Your task is to evaluate the candidate based on structured categories. Be thorough and detailed in your analysis. Don't be lenient with the candidate. If there are mistakes or areas for improvement, point them out.
 
-        Please score the candidate from 0 to 100 in the following areas. Do not add categories other than the ones provided:
-        - **Communication Skills**: Clarity, articulation, structured responses.
-        - **Technical Knowledge**: Understanding of key concepts for the role.
-        - **Problem-Solving**: Ability to analyze problems and propose solutions.
-        - **Cultural & Role Fit**: Alignment with company values and job role.
-        - **Confidence & Clarity**: Confidence in responses, engagement, and clarity.
-        `,
+    This interview may be for ANY profession (e.g. software, nursing, marketing, teaching, finance, design, law, sales). Evaluate every category in the context of the candidate's specific role and field, using standards appropriate to that profession. Do NOT assume a tech role.
+
+    Transcript:
+    ${formattedTranscript}
+
+    Please score the candidate from 0 to 100 in the following areas. Do not add categories other than the ones provided:
+    - **Communication Skills**: Clarity, articulation, structured responses.
+    - **Technical Knowledge**: Understanding of the key concepts, domain knowledge, and role-specific skills required for their field (whatever profession it is).
+    - **Problem-Solving**: Ability to analyze problems and propose solutions.
+    - **Cultural & Role Fit**: Alignment with the values and expectations of the role and field.
+    - **Confidence & Clarity**: Confidence in responses, engagement, and clarity.
+    `,
       system:
-        "You are a professional interviewer analyzing a mock interview. Your task is to evaluate the candidate based on structured categories",
+        "You are a professional interviewer analyzing a mock interview. Your task is to evaluate the candidate based on structured categories.",
     });
 
     const feedback = {
