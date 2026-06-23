@@ -115,6 +115,13 @@ export const interviewer: CreateAssistantDTO = {
     style: 0.5,
     useSpeakerBoost: true,
   },
+  backgroundSpeechDenoisingPlan: {
+    smartDenoisingPlan: { enabled: true },
+    fourierDenoisingPlan: {
+      enabled: true,
+      mediaDetectionEnabled: true,
+    },
+  },
   model: {
     provider: "openai",
     model: "gpt-4",
