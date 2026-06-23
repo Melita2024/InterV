@@ -15,9 +15,15 @@ const Layout = async ({ children }: { children: ReactNode }) => {
   return (
     <div className="root-layout">
       <nav className="flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2">
-          <Image src="/logo.svg" alt="MockMate Logo" width={38} height={32} />
-          <h2 className="text-primary-100">Inter-V</h2>
+        <Link href="/" className="flex items-center gap-2 group">
+          <Image
+            src="/logo.svg"
+            alt="InterV Logo"
+            width={38}
+            height={32}
+            className="transition-transform group-hover:scale-105"
+          />
+          <h2 className="gradient-text">InterV</h2>
         </Link>
 
         <div className="flex items-center gap-4">

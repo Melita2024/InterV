@@ -10,8 +10,9 @@ const monaSans = Mona_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Inter-V",
-  description: "An AI-powered platform for preparing for mock interviews",
+  title: "InterV | AI Mock Interview Coach",
+  description:
+    "Practice real interview questions with a voice-driven AI interviewer and get instant, actionable feedback.",
 };
 
 export default function RootLayout({

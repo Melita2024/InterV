@@ -21,6 +21,13 @@ interface SavedMessage {
   content: string;
 }
 
+const CONNECTING_MESSAGES = [
+  "Connecting to InterV...",
+  "InterV is getting ready...",
+  "Waking up your AI interviewer...",
+  "Almost there...",
+];
+
 const Agent = ({
   userName,
   userId,
@@ -37,7 +44,21 @@ const Agent = ({
   const [isUserSpeaking, setIsUserSpeaking] = useState(false);
   const [lastMessage, setLastMessage] = useState<string>("");
   const [isGeneratingFeedback, setIsGeneratingFeedback] = useState(false);
+  const [connectingMessageIndex, setConnectingMessageIndex] = useState(0);
   const feedbackGeneratedRef = useRef(false);
+
+  useEffect(() => {
+    if (callStatus !== CallStatus.CONNECTING) {
+      setConnectingMessageIndex(0);
+      return;
+    }
+
+    const interval = setInterval(() => {
+      setConnectingMessageIndex((prev) => (prev + 1) % CONNECTING_MESSAGES.length);
+    }, 1800);
+
+    return () => clearInterval(interval);
+  }, [callStatus]);
 
   useEffect(() => {
     const onCallStart = () => {
@@ -171,7 +192,7 @@ const Agent = ({
     <>
       <div className="call-view">
         {/* AI Interviewer Card */}
-        <div className="card-interviewer">
+        <div className={cn("card-interviewer", isSpeaking && "is-speaking")}>
           <div className="avatar">
             <Image
               src="/logo.svg"
@@ -182,7 +203,14 @@ const Agent = ({
             />
             {isSpeaking && <span className="animate-speak" />}
           </div>
-          <h3>AI Interviewer</h3>
+          <h3>InterV AI Interviewer</h3>
+          <span className="badge-pill">
+            {callStatus === CallStatus.ACTIVE
+              ? isSpeaking
+                ? "Speaking"
+                : "Listening"
+              : "Powered by InterV"}
+          </span>
         </div>
 
         {/* User Profile Card */}
@@ -225,7 +253,11 @@ const Agent = ({
         {isGeneratingFeedback ? (
           <p className="text-primary-200 animate-pulse">Generating your feedback...</p>
         ) : callStatus !== "ACTIVE" ? (
-          <button className="relative btn-call" onClick={() => handleCall()}>
+          <button
+            className="relative btn-call whitespace-nowrap"
+            onClick={() => handleCall()}
+            disabled={callStatus === "CONNECTING"}
+          >
             <span
               className={cn(
                 "absolute animate-ping rounded-full opacity-75",
@@ -234,9 +266,13 @@ const Agent = ({
             />
 
             <span className="relative">
-              {callStatus === "INACTIVE" || callStatus === "FINISHED"
-                ? "Call"
-                : ". . ."}
+              {callStatus === "INACTIVE" || callStatus === "FINISHED" ? (
+                "Call"
+              ) : (
+                <span key={connectingMessageIndex} className="animate-fadeIn">
+                  {CONNECTING_MESSAGES[connectingMessageIndex]}
+                </span>
+              )}
             </span>
           </button>
         ) : (
