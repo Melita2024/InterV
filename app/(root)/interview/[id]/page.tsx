@@ -2,6 +2,7 @@ import Image from "next/image";
 import { redirect } from "next/navigation";
 
 import Agent from "@/components/Agent";
+import MicCheck from "@/components/MicCheck";
 import { getRandomInterviewCover } from "@/lib/utils";
 
 import {
@@ -47,6 +48,8 @@ const InterviewDetails = async ({ params }: RouteParams) => {
           {interview.type}
         </p>
       </div>
+
+      <MicCheck />
 
       <Agent
         userName={user.name}
