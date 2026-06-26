@@ -35,6 +35,7 @@ const authFormSchema = (type: FormType) => {
 const AuthForm = ({ type }: { type: FormType }) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [isRedirecting, setIsRedirecting] = useState(false);
 
   const formSchema = authFormSchema(type);
   const form = useForm<z.infer<typeof formSchema>>({
@@ -67,10 +68,12 @@ const AuthForm = ({ type }: { type: FormType }) => {
 
         if (!result.success) {
           toast.error(result.message);
+          setIsLoading(false);
           return;
         }
 
-        toast.success("Account created successfully. Please sign in.");
+        toast.success("Account created successfully. Redirecting to sign in...");
+        setIsRedirecting(true);
         router.push("/sign-in");
       } else {
         const { email, password } = data;
@@ -84,6 +87,7 @@ const AuthForm = ({ type }: { type: FormType }) => {
         const idToken = await userCredential.user.getIdToken();
         if (!idToken) {
           toast.error("Sign in Failed. Please try again.");
+          setIsLoading(false);
           return;
         }
 
@@ -92,13 +96,13 @@ const AuthForm = ({ type }: { type: FormType }) => {
           idToken,
         });
 
-        toast.success("Signed in successfully.");
+        toast.success("Signed in successfully. Redirecting to your dashboard...");
+        setIsRedirecting(true);
         router.push("/");
       }
     } catch (error) {
       console.log(error);
       toast.error(`There was an error: ${error}`);
-    } finally {
       setIsLoading(false);
     }
   };
@@ -121,11 +125,11 @@ const AuthForm = ({ type }: { type: FormType }) => {
       });
 
       await signIn({ email: user.email!, idToken });
-      toast.success("Signed in successfully.");
+      toast.success("Signed in successfully. Redirecting to your dashboard...");
+      setIsRedirecting(true);
       router.push("/");
     } catch (error: any) {
       toast.error(error.message || "Social sign-in failed.");
-    } finally {
       setIsLoading(false);
     }
   };
@@ -174,13 +178,15 @@ const AuthForm = ({ type }: { type: FormType }) => {
             />
 
             <Button className="btn" type="submit" disabled={isLoading}>
-              {isLoading
-                ? isSignIn
-                  ? "Signing In..."
-                  : "Creating Account..."
-                : isSignIn
-                  ? "Sign In"
-                  : "Create an Account"}
+              {isRedirecting
+                ? "Redirecting..."
+                : isLoading
+                  ? isSignIn
+                    ? "Signing In..."
+                    : "Creating Account..."
+                  : isSignIn
+                    ? "Sign In"
+                    : "Create an Account"}
             </Button>
           </form>
         </Form>
@@ -193,20 +199,22 @@ const AuthForm = ({ type }: { type: FormType }) => {
 
         <div className="flex gap-3">
           <button
+            type="button"
             onClick={() => handleSocialSignIn("google")}
             disabled={isLoading}
             className="flex flex-1 items-center justify-center gap-2 bg-dark-200 hover:bg-dark-300 border border-light-600/30 rounded-full min-h-12 font-semibold text-sm text-white transition-colors disabled:opacity-60 cursor-pointer"
           >
             <Image src="/google.svg" alt="Google" width={20} height={20} />
-            Google
+            {isRedirecting ? "Redirecting..." : "Google"}
           </button>
           <button
+            type="button"
             onClick={() => handleSocialSignIn("github")}
             disabled={isLoading}
             className="flex flex-1 items-center justify-center gap-2 bg-dark-200 hover:bg-dark-300 border border-light-600/30 rounded-full min-h-12 font-semibold text-sm text-white transition-colors disabled:opacity-60 cursor-pointer"
           >
             <Image src="/github.svg" alt="GitHub" width={20} height={20} />
-            GitHub
+            {isRedirecting ? "Redirecting..." : "GitHub"}
           </button>
         </div>
 

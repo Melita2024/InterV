@@ -8,6 +8,7 @@ import {
   getInterviewById,
 } from "@/lib/actions/general.action";
 import { Button } from "@/components/ui/button";
+import QuestionsModal from "@/components/QuestionsModal";
 import { getCurrentUser } from "@/lib/actions/auth.action";
 
 const Feedback = async ({ params }: RouteParams) => {
@@ -56,6 +57,10 @@ const Feedback = async ({ params }: RouteParams) => {
             </p>
           </div>
         </div>
+      </div>
+
+      <div className="flex flex-row justify-center">
+        <QuestionsModal questions={interview.questions} />
       </div>
 
       <hr />

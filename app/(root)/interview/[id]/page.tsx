@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 
 import Agent from "@/components/Agent";
 import MicCheck from "@/components/MicCheck";
+import QuestionsModal from "@/components/QuestionsModal";
 import { getRandomInterviewCover } from "@/lib/utils";
 
 import {
@@ -44,9 +45,12 @@ const InterviewDetails = async ({ params }: RouteParams) => {
           <DisplayTechIcons techStack={interview.techstack} />
         </div>
 
-        <p className="bg-dark-200 px-4 py-2 rounded-lg h-fit">
-          {interview.type}
-        </p>
+        <div className="flex flex-col items-end gap-3">
+          <p className="bg-dark-200 px-4 py-2 rounded-lg h-fit">
+            {interview.type}
+          </p>
+          <QuestionsModal questions={interview.questions} />
+        </div>
       </div>
 
       <MicCheck />
