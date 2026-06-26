@@ -5,7 +5,13 @@ import { ListChecks, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
-const QuestionsModal = ({ questions }: { questions?: string[] }) => {
+const QuestionsModal = ({
+  questions,
+  compact = false,
+}: {
+  questions?: string[];
+  compact?: boolean;
+}) => {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -26,11 +32,14 @@ const QuestionsModal = ({ questions }: { questions?: string[] }) => {
       <Button
         type="button"
         variant="outline"
+        size={compact ? "icon" : "default"}
         className="!rounded-full gap-2 cursor-pointer"
         onClick={() => setOpen(true)}
+        title="View Interview Questions"
+        aria-label="View Interview Questions"
       >
         <ListChecks className="size-4" />
-        View Interview Questions
+        {!compact && "View Interview Questions"}
       </Button>
 
       {open && (

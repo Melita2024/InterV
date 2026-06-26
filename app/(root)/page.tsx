@@ -65,6 +65,7 @@ async function Home() {
                 type={interview.type}
                 techstack={interview.techstack}
                 createdAt={interview.createdAt}
+                questions={interview.questions}
               />
             ))
           ) : (
@@ -87,6 +88,7 @@ async function Home() {
                 type={interview.type}
                 techstack={interview.techstack}
                 createdAt={interview.createdAt}
+                questions={interview.questions}
               />
             ))
           ) : (

@@ -4,6 +4,7 @@ import Image from "next/image";
 
 import { Button } from "./ui/button";
 import DisplayTechIcons from "./DisplayTechIcons";
+import QuestionsModal from "./QuestionsModal";
 
 import { cn, getRandomInterviewCover } from "@/lib/utils";
 import { getFeedbackByInterviewId } from "@/lib/actions/general.action";
@@ -15,6 +16,7 @@ const InterviewCard = async ({
   type,
   techstack,
   createdAt,
+  questions,
 }: InterviewCardProps) => {
   const feedback =
     userId && interviewId
@@ -88,20 +90,24 @@ const InterviewCard = async ({
           </p>
         </div>
 
-        <div className="flex flex-row justify-between">
+        <div className="flex flex-row justify-between items-center gap-3">
           <DisplayTechIcons techStack={techstack} />
 
-          <Button className="btn-primary">
-            <Link
-              href={
-                feedback
-                  ? `/interview/${interviewId}/feedback`
-                  : `/interview/${interviewId}`
-              }
-            >
-              {feedback ? "Check Feedback" : "View Interview"}
-            </Link>
-          </Button>
+          <div className="flex flex-row gap-2">
+            <QuestionsModal questions={questions} compact />
+
+            <Button className="btn-primary">
+              <Link
+                href={
+                  feedback
+                    ? `/interview/${interviewId}/feedback`
+                    : `/interview/${interviewId}`
+                }
+              >
+                {feedback ? "Check Feedback" : "View Interview"}
+              </Link>
+            </Button>
+          </div>
         </div>
       </div>
     </div>
