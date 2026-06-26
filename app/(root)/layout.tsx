@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 
 import { getCurrentUser, isAuthenticated } from "@/lib/actions/auth.action";
 import LogoutButton from "@/components/LogoutButton";
+import InstallPwaButton from "@/components/InstallPwaButton";
 
 const Layout = async ({ children }: { children: ReactNode }) => {
   const isUserAuthenticated = await isAuthenticated();
@@ -27,6 +28,7 @@ const Layout = async ({ children }: { children: ReactNode }) => {
         </Link>
 
         <div className="flex items-center gap-4">
+          <InstallPwaButton />
           <LogoutButton />
           <Link href="/profile" className="relative group">
             <Image
